@@ -40,9 +40,47 @@ const PATHWAY_TAG = {
   'Honorary Doctorate': 'bg-amber-500/10 text-amber-400',
 };
 
-export default function RecommendationCard({ recommendation, reason, onReset }) {
+/**
+ * Parse simple markdown into renderable sections.
+ * Handles ## headings and bullet lists (- or *).
+ */
+function parseInsightsMarkdown(markdown) {
+  const sections = [];
+  let currentSection = null;
+
+  const lines = markdown.split('\n');
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    // Heading (## or ###)
+    const headingMatch = trimmed.match(/^#{2,3}\s+(.+)$/);
+    if (headingMatch) {
+      currentSection = { title: headingMatch[1], content: [], bullets: [] };
+      sections.push(currentSection);
+      continue;
+    }
+
+    // Bullet point (- or *)
+    const bulletMatch = trimmed.match(/^[-*]\s+(.+)$/);
+    if (bulletMatch && currentSection) {
+      currentSection.bullets.push(bulletMatch[1]);
+      continue;
+    }
+
+    // Regular text
+    if (trimmed && currentSection) {
+      currentSection.content.push(trimmed);
+    }
+  }
+
+  return sections;
+}
+
+export default function RecommendationCard({ recommendation, reason, aiInsights, onReset }) {
   const meta = PATHWAY_META[recommendation] || PATHWAY_META['Certification Program'];
   const tag = PATHWAY_TAG[recommendation] || 'bg-gray-500/10 text-gray-400';
+
+  const parsedInsights = aiInsights ? parseInsightsMarkdown(aiInsights) : null;
 
   return (
     <div className="space-y-4">
@@ -78,6 +116,47 @@ export default function RecommendationCard({ recommendation, reason, onReset }) 
           <p className="text-sm text-gray-300 leading-relaxed">
             {reason}
           </p>
+        </div>
+
+        {/* AI Insights */}
+        <div className="px-5 py-4 border-t border-gray-800">
+          <div className="flex items-center gap-1.5 mb-3">
+            <span className="text-sm">✨</span>
+            <p className="text-[11px] font-medium text-gray-500 uppercase tracking-widest">
+              AI Insights
+            </p>
+          </div>
+
+          {parsedInsights && parsedInsights.length > 0 ? (
+            <div className="space-y-4">
+              {parsedInsights.map((section, idx) => (
+                <div key={idx}>
+                  <h3 className="text-xs font-semibold text-gray-300 mb-1.5">
+                    {section.title}
+                  </h3>
+                  {section.content.length > 0 && (
+                    <p className="text-sm text-gray-400 leading-relaxed mb-1.5">
+                      {section.content.join(' ')}
+                    </p>
+                  )}
+                  {section.bullets.length > 0 && (
+                    <ul className="space-y-1">
+                      {section.bullets.map((bullet, bIdx) => (
+                        <li key={bIdx} className="flex items-start gap-2 text-sm text-gray-400">
+                          <span className="text-gray-600 mt-1 flex-shrink-0">•</span>
+                          <span>{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500 italic">
+              AI insights are temporarily unavailable. Your recommendation has still been generated successfully.
+            </p>
+          )}
         </div>
       </div>
 

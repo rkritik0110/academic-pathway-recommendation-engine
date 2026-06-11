@@ -7,6 +7,7 @@ import FormField from '../components/FormField';
 import RecommendationCard from '../components/RecommendationCard';
 import { profileSchema, QUALIFICATIONS } from '../lib/schema';
 import { generateRecommendation } from '../lib/recommend';
+import { generateAIInsights } from '../lib/gemini';
 import { supabase } from '../lib/supabase';
 
 export default function Home() {
@@ -60,6 +61,16 @@ export default function Home() {
         return;
       }
 
+      // Generate Gemini AI insights (non-blocking — null on failure)
+      const aiInsights = await generateAIInsights({
+        fullName: data.fullName,
+        qualification: data.qualification,
+        experience: data.experience,
+        profession: data.profession,
+        careerGoal: data.careerGoal,
+        recommendation,
+      });
+
       const { error: dbError } = await supabase.from('submissions').insert({
         full_name: data.fullName,
         email: data.email,
@@ -69,6 +80,7 @@ export default function Home() {
         career_goal: data.careerGoal,
         recommendation,
         reason,
+        ai_insights: aiInsights,
       });
 
       if (dbError) {
@@ -78,7 +90,7 @@ export default function Home() {
         return;
       }
 
-      setResult({ recommendation, reason });
+      setResult({ recommendation, reason, aiInsights });
       toast.success('Profile submitted successfully!');
     } catch (err) {
       console.error('Submission error:', err);
@@ -99,6 +111,7 @@ export default function Home() {
         <RecommendationCard
           recommendation={result.recommendation}
           reason={result.reason}
+          aiInsights={result.aiInsights}
           onReset={handleReset}
         />
       </div>

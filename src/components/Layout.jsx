@@ -14,9 +14,6 @@ export default function Layout({ children }) {
       <header className="sticky top-0 z-50 border-b border-gray-800 bg-[#0B0F1A]/80 backdrop-blur-sm">
         <div className="mx-auto max-w-5xl flex items-center justify-between px-4 sm:px-6 h-14">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center text-white font-semibold text-xs transition-colors duration-200 group-hover:bg-blue-500">
-              AP
-            </div>
             <span className="text-sm font-semibold text-gray-100 hidden sm:inline">
               Academic Pathway
             </span>
