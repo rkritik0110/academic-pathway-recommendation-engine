@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base ─── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: #0B0F1A;
+  color: #F9FAFB;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Form Elements ─── */
+input,
+select,
+textarea {
+  background-color: #111827;
+  color: #F9FAFB;
+  border-color: #374151;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #4B5563;
+}
+
+option {
+  background-color: #111827;
+  color: #F9FAFB;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #111827 inset !important;
+  -webkit-text-fill-color: #F9FAFB !important;
+  border-color: #374151 !important;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #4B5563; }
+
+/* ─── Selection ─── */
+::selection {
+  background: rgba(59, 130, 246, 0.25);
+  color: #F9FAFB;
+}
+
+/* ─── Skeleton Loader ─── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #1F2937 25%, #283548 50%, #1F2937 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 6px;
+}
